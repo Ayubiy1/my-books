@@ -1,0 +1,30 @@
+{
+  "name": "my-books-bk",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Ayubiy1/my-books#readme",
+  "bugs": {
+    "url": "https://github.com/Ayubiy1/my-books/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ayubiy1/my-books.git"
+  },
+  "license": "ISC",
+  "author": "Myhammad Yusuf",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.6.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
