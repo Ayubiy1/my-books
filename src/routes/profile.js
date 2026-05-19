@@ -1,9 +1,6 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { OAuth2Client } = require("google-auth-library");
-
-// const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const User = require("../models/User.module");
 const tokenService = require("../service/token.service");
@@ -12,6 +9,8 @@ const authService = require("../service/auth.service");
 const tokenModel = require("../models/token.model");
 const { userMiddleware } = require("../middleware/middleware");
 const UserModule = require("../models/User.module");
+const BookModule = require("../models/Book.module");
+const FavouriteModule = require("../models/Favourite.module");
 
 const router = express.Router();
 
@@ -82,6 +81,51 @@ router.delete("/:id", userMiddleware, async (req, res) => {
   }
 });
 
-//
+router.post("/favourite/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const existingBook = await BookModule.findById(id);
+
+    const savedFavoBook = {
+      bookId: existingBook.id.toString(),
+      name: existingBook.name,
+      description: existingBook.description,
+      price: existingBook.price,
+      category: existingBook.category,
+      images: existingBook.images[0],
+      rating: existingBook.rating,
+      isActive: existingBook.isActive,
+    };
+
+    const newLikedBook = await FavouriteModule.create(savedFavoBook);
+
+    res.status(201).json({
+      message: "Kitob muvaffaqiyatli saqlandi",
+      book: newLikedBook,
+    });
+
+    // res.json(existingBook);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.delete("/favourite/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const existingBook = await FavouriteModule.findByIdAndDelete(id);
+
+    if (!existingBook) {
+      return res
+        .status(404)
+        .json({ message: "Nimadur xato qayta urinib ko'ring!" });
+    }
+
+    res.json({ message: "LikedBook muvaffaqiyatli o'chirildi" });
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 module.exports = router;

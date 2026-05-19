@@ -15,11 +15,10 @@ const bookSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    categoryId: String,
-    // {
-    //   // type: mongoose.Schema.Types.ObjectId,
-    //   // ref: "Category",
-    // },
+    categoryId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+    },
     images: [
       {
         type: String,
@@ -35,8 +34,8 @@ const bookSchema = new mongoose.Schema(
     },
     owner: {
       type: String,
-      // type: mongoose.Schema.Types.ObjectId,
-      // ref: "Seller",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Seller",
     },
     rating: Number,
   },
