@@ -16,10 +16,6 @@ const bookSchema = new mongoose.Schema(
       required: true,
     },
     categoryId: String,
-    // {
-    //   // type: mongoose.Schema.Types.ObjectId,
-    //   // ref: "Category",
-    // },
     images: [
       {
         type: String,
@@ -27,7 +23,7 @@ const bookSchema = new mongoose.Schema(
     ],
     numberSold: {
       type: Number,
-      default: 0, // 🔥 Product umumiy sotilgan soni
+      default: 0, // productni umumiy sotilgan soni
     },
     isActive: {
       type: Boolean,
@@ -35,8 +31,6 @@ const bookSchema = new mongoose.Schema(
     },
     owner: {
       type: String,
-      // type: mongoose.Schema.Types.ObjectId,
-      // ref: "Seller",
     },
     rating: Number,
   },

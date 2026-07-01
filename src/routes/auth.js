@@ -27,15 +27,46 @@ const generateToken = (user) => {
   return { accessToken, refreshToken };
 };
 
+/**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Register a new user
+ *     description: Create a new user account with fullName, email, password, and role.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *                 example: "Books Admin"
+ *               email:
+ *                 type: string
+ *                 example: "admin@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "123456"
+ *               role:
+ *                 type: string
+ *                 example: "user"
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *       400:
+ *         description: User already exists
+ *       500:
+ *         description: Register error
+ */
 router.post("/register", async (req, res) => {
   try {
     const { fullName, email, password, role } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({
-        message: "User already exists",
-      });
+      return res.status(400).json({ message: "User already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -45,6 +76,11 @@ router.post("/register", async (req, res) => {
       password: hashedPassword,
       role,
     });
+
+    const userDto = new UserDto(newUser); // ❌ existingUser emas, yangi user
+    const tokens = tokenService.generateToken({ ...userDto });
+    await tokenService.saveToken(userDto.id, tokens.refreshToken);
+
     res.status(201).json({
       message: "User created",
       user: {
@@ -53,20 +89,44 @@ router.post("/register", async (req, res) => {
         email: newUser.email,
         role: newUser.role,
       },
-      token: generateAccessToken(newUser),
+      token: tokens.accessToken,
     });
   } catch (error) {
     console.error(error);
-
-    res.status(500).json({
-      message: "Register error",
-    });
+    res.status(500).json({ message: "Register error" });
   }
 });
 
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Login user
+ *     description: Authenticate user with email and password, return access and refresh tokens.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "admin@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "123456"
+ *     responses:
+ *       200:
+ *         description: User logged in successfully
+ *       400:
+ *         description: User not found or wrong password
+ *       500:
+ *         description: Login error
+ */
 router.post("/login", async (req, res) => {
   try {
-    const { fullName, email, password, role } = req.body;
+    const { email, password } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (!existingUser) {
@@ -148,6 +208,45 @@ module.exports = router;
   //     res.json({ message: "Successfully!" });
   //   } catch (error) {
   //     console.log(error);
+  //   }
+  // });
+}
+
+{
+  // router.post("/register", async (req, res) => {
+  //   try {
+  //     const { fullName, email, password, role } = req.body;
+  //     const existingUser = await User.findOne({ email });
+  //     if (existingUser) {
+  //       return res.status(400).json({
+  //         message: "User already exists",
+  //       });
+  //     }
+  //     const userDto = new UserDto(existingUser);
+  //     const tokens = tokenService.generateToken({ ...userDto });
+  //     await tokenService.saveToken(userDto?.id, tokens.refreshToken);
+  //     const hashedPassword = await bcrypt.hash(password, 10);
+  //     const newUser = await User.create({
+  //       fullName,
+  //       email: email.toLowerCase(),
+  //       password: hashedPassword,
+  //       role,
+  //     });
+  //     res.status(201).json({
+  //       message: "User created",
+  //       user: {
+  //         id: newUser._id,
+  //         fullName: newUser.fullName,
+  //         email: newUser.email,
+  //         role: newUser.role,
+  //       },
+  //       token: generateAccessToken(newUser),
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //     res.status(500).json({
+  //       message: "Register error",
+  //     });
   //   }
   // });
 }

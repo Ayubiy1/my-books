@@ -1,0 +1,80 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "My API",
+    "version": "1.0.0",
+    "description": "API documentation"
+  },
+  "servers": [
+    {
+      "url": "https://my-books-n5re.onrender.com/api/"
+    }
+  ],
+  "paths": {
+    "/users": {
+      "get": {
+        "summary": "Get all users",
+        "responses": {
+          "200": {
+            "description": "List of users"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new user",
+        "responses": {
+          "200": {
+            "description": "Created user"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a user",
+        "responses": {
+          "200": {
+            "description": "Updated user"
+          }
+        }
+      }
+    },
+    "/auth": {
+      "get": {
+        "summary": "Get all auth",
+        "responses": {
+          "200": {
+            "description": "List of auth"
+          }
+        }
+      }
+    },
+
+    "/books": {
+      "get": {
+        "summary": "Get all books",
+        "responses": {
+          "200": { "description": "List of books" }
+        }
+      },
+      "post": {
+        "summary": "Create a new book",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "author": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Book created" }
+        }
+      }
+    }
+  }
+}

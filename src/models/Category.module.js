@@ -12,6 +12,9 @@ const categorySchema = new mongoose.Schema(
       trim: true,
     },
     image: String, // category rasmi (banner uchun)
+    slug: String,
+    icon: String,
+    parentCategory: String,
   },
   { timestamps: true },
 );

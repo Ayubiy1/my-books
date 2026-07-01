@@ -22,6 +22,7 @@ const authMiddleware = (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(decoded);
 
     req.user = decoded;
 
@@ -36,7 +37,11 @@ const authMiddleware = (req, res, next) => {
 const userMiddleware = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const refreshToken = req.cookies?.refreshToken;
+    const refreshToken = req?.headers?.authorization?.split(" ")[1];
+
+    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+    const existingUser = await UserModule.findById(id);
+    const userId = decoded?.id.toString();
 
     if (!refreshToken) {
       return res
@@ -44,19 +49,73 @@ const userMiddleware = async (req, res, next) => {
         .json({ message: "Qandaydur muammo bor qayta urinib koring!" });
     }
 
-    const userCheck = await UserModule.findById(id);
-    if (!userCheck) {
+    if (!existingUser) {
       return res.status(404).json({ message: "Bunaday User mavjud emas!" });
     }
 
-    const checkToken = await tokenModel.findOne({ refreshToken });
-    if (checkToken?.user.toString() !== id) {
-      return res.status(404).json({ message: "something wrong try again!" });
+    if (userId !== id) {
+      return res.status(404).json({ message: "Ruhsat yo'q!" });
     }
 
-    const user = new UserDto(userCheck);
+    const user = new UserDto(decoded);
     next();
   } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+
+const adminMiddleware = async (req, res, next) => {
+  try {
+    const accessToken = req.headers?.authorization?.split(" ")[1];
+    if (!accessToken) {
+      return res.status(401).json({ message: "Token topilmadi!" });
+    }
+
+    const decoded = jwt.verify(accessToken, process.env.JWT_ACCESS_KEY);
+    const user = await User.findById(decoded.id);
+
+    if (!user) return res.status(404).json({ message: "User mavjud emas!" });
+    if (decoded.role !== "admin")
+      return res.status(403).json({ message: "Ruxsat yo'q!" });
+
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res
+      .status(401)
+      .json({ message: "Token muddati tugagan yoki noto'g'ri!" });
+  }
+};
+
+const adminMiddleware1 = async (req, res, next) => {
+  try {
+    const refreshToken = req.headers?.authorization.split(" ")[1];
+    if (!refreshToken) {
+      return res
+        .status(404)
+        .json({ message: "Qandaydur muammo bor qayta urinib koring!" });
+    }
+
+    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+    const userId = decoded?.id.toString();
+    const existingUser = await UserModule.findById(userId);
+
+    if (!existingUser) {
+      return res.status(404).json({ message: "Bunaday User mavjud emas!" });
+    }
+
+    if (decoded?.role !== "admin") {
+      return res.status(404).json({ message: "Ruhsat yo'q!" });
+    }
+
+    const user = new UserDto(decoded);
+    next();
+  } catch (error) {
+    console.log(error);
+
     return res.status(500).json({
       message: "Server error",
     });
@@ -66,24 +125,5 @@ const userMiddleware = async (req, res, next) => {
 module.exports = {
   authMiddleware,
   userMiddleware,
+  adminMiddleware,
 };
-
-{
-  // module.exports = function (req, res, next) {
-  //   try {
-  //     const authHeader = req.headers.authorization;
-  //     const token = authHeader.split(" ")[1];
-  //     console.log(authHeader);
-  //     if (!token) {
-  //       return res
-  //         .status(401)
-  //         .json({ message: "Nimadur hato qayta login qilib ko'ring" });
-  //     }
-  //     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  //     req.user = decoded;
-  //     next();
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-}
