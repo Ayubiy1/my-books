@@ -19,6 +19,7 @@ const router = express.Router();
  * /users:
  *   get:
  *     summary: Get all users
+ *     tags: [Users]
  *     description: Retrieve a list of all users
  *     responses:
  *       200:
@@ -40,6 +41,7 @@ router.get("/", async (req, res) => {
  * /users/{id}:
  *   get:
  *     summary: Get users by ID
+ *     tags: [Users]
  *     parameters:
  *       - in: path
  *         name: id
@@ -66,54 +68,12 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-{
-  // /**
-  //  * @swagger
-  //  * /users/{id}:
-  //  *   put:
-  //  *     summary: Update user by ID
-  //  *     description: Update an existing user's information. Requires a valid JWT token in the Authorization header.
-  //  *     parameters:
-  //  *       - in: path
-  //  *         name: id
-  //  *         required: true
-  //  *         schema:
-  //  *           type: string
-  //  *         description: User ID
-  //  *       - in: header
-  //  *         name: Authorization
-  //  *         required: true
-  //  *         schema:
-  //  *           type: string
-  //  *         description: Bearer token (e.g., "Bearer <JWT>")
-  //  *     requestBody:
-  //  *       required: true
-  //  *       content:
-  //  *         application/json:
-  //  *           schema:
-  //  *             type: object
-  //  *             properties:
-  //  *               name:
-  //  *                 type: string
-  //  *               email:
-  //  *                 type: string
-  //  *               password:
-  //  *                 type: string
-  //  *     responses:
-  //  *       200:
-  //  *         description: User updated successfully
-  //  *       404:
-  //  *         description: User not found or unauthorized
-  //  *       401:
-  //  *         description: Invalid or missing token
-  //  */
-}
-
 /**
  * @swagger
  * /users/{id}:
  *   put:
  *     summary: Update user by ID
+ *     tags: [Users]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -179,6 +139,7 @@ router.put("/:id", async (req, res) => {
  * /users/{id}:
  *   delete:
  *     summary: Delete user by ID
+ *     tags: [Users]
  *     description: Delete an existing user. Requires a valid JWT token in the Authorization header.
  *     security:
  *       - bearerAuth: []
@@ -264,3 +225,46 @@ router.delete("/favourite/:id", async (req, res) => {
 });
 
 module.exports = router;
+
+{
+  // /**
+  //  * @swagger
+  //  * /users/{id}:
+  //  *   put:
+  //  *     summary: Update user by ID
+  //  *     description: Update an existing user's information. Requires a valid JWT token in the Authorization header.
+  //  *     parameters:
+  //  *       - in: path
+  //  *         name: id
+  //  *         required: true
+  //  *         schema:
+  //  *           type: string
+  //  *         description: User ID
+  //  *       - in: header
+  //  *         name: Authorization
+  //  *         required: true
+  //  *         schema:
+  //  *           type: string
+  //  *         description: Bearer token (e.g., "Bearer <JWT>")
+  //  *     requestBody:
+  //  *       required: true
+  //  *       content:
+  //  *         application/json:
+  //  *           schema:
+  //  *             type: object
+  //  *             properties:
+  //  *               name:
+  //  *                 type: string
+  //  *               email:
+  //  *                 type: string
+  //  *               password:
+  //  *                 type: string
+  //  *     responses:
+  //  *       200:
+  //  *         description: User updated successfully
+  //  *       404:
+  //  *         description: User not found or unauthorized
+  //  *       401:
+  //  *         description: Invalid or missing token
+  //  */
+}

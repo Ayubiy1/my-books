@@ -32,6 +32,7 @@ const generateToken = (user) => {
  * /auth/register:
  *   post:
  *     summary: Register a new user
+ *     tags: [Auth]
  *     description: Create a new user account with fullName, email, password, and role.
  *     requestBody:
  *       required: true
@@ -102,6 +103,7 @@ router.post("/register", async (req, res) => {
  * /auth/login:
  *   post:
  *     summary: Login user
+ *     tags: [Auth]
  *     description: Authenticate user with email and password, return access and refresh tokens.
  *     requestBody:
  *       required: true

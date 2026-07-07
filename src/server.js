@@ -8,6 +8,7 @@ const authRoutes = require("./routes/auth.js");
 const productsRouter = require("./routes/book.js");
 const userRouter = require("./routes/profile.js");
 const userCategory = require("./routes/category.js");
+const userOrder = require("./routes/order.js");
 
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./swagger.js");
@@ -28,6 +29,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/products", productsRouter);
 app.use("/api/users", userRouter);
 app.use("/api/categories", userCategory);
+app.use("/api/orders", userOrder);
 
 mongoose
   .connect(process.env.MONGO_URI)

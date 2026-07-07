@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const UserModule = require("../models/User.module");
 const UserDto = require("../dtos/user.dto");
 const tokenModel = require("../models/token.model");
+const OrderModule = require("../models/Order.module");
 
 const authMiddleware = (req, res, next) => {
   try {
@@ -90,40 +91,43 @@ const adminMiddleware = async (req, res, next) => {
   }
 };
 
-const adminMiddleware1 = async (req, res, next) => {
+const orderMiddleware = async (req, res, next) => {
   try {
-    const refreshToken = req.headers?.authorization.split(" ")[1];
+    const { id } = req.params;
+    const refreshToken = req?.headers?.authorization?.split(" ")[1];
+
+    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+    const existingOrder = await OrderModule.findById(id);
+    const userId = decoded?.id.toString();
+
     if (!refreshToken) {
       return res
         .status(404)
         .json({ message: "Qandaydur muammo bor qayta urinib koring!" });
     }
 
-    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
-    const userId = decoded?.id.toString();
-    const existingUser = await UserModule.findById(userId);
-
-    if (!existingUser) {
+    if (!existingOrder) {
       return res.status(404).json({ message: "Bunaday User mavjud emas!" });
     }
 
-    if (decoded?.role !== "admin") {
-      return res.status(404).json({ message: "Ruhsat yo'q!" });
+    if (userId !== existingOrder?.userId) {
+      return res
+        .status(404)
+        .json({ message: "Siz bunday imkoniyatdan foydalana olmaysiz!" });
     }
 
     const user = new UserDto(decoded);
     next();
   } catch (error) {
     console.log(error);
-
     return res.status(500).json({
       message: "Server error",
     });
   }
 };
-
 module.exports = {
   authMiddleware,
   userMiddleware,
   adminMiddleware,
+  orderMiddleware,
 };

@@ -9,12 +9,12 @@ const router = express.Router();
  * /products:
  *   get:
  *     summary: Get all products
+ *     tags: [Products]
  *     description: Retrieve a list of all products
  *     responses:
  *       200:
  *         description: List of products
  */
-
 router.get("/", async (req, res) => {
   try {
     const books = await BookModule.find();
@@ -33,6 +33,7 @@ router.get("/", async (req, res) => {
  * /products/{id}:
  *   get:
  *     summary: Get book by ID
+ *     tags: [Products]
  *     parameters:
  *       - in: path
  *         name: id
@@ -65,6 +66,7 @@ router.get("/:id", async (req, res) => {
  * /products:
  *   post:
  *     summary: Create a new book
+ *     tags: [Products]
  *     description: Add a new book to the database.
  *     requestBody:
  *       required: true
@@ -96,6 +98,8 @@ router.get("/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
+    const checkBook = await BookModule.findOne({ title: req.body.title });
+
     const newBook = new BookModule(req.body);
 
     const savedBook = await newBook.save();
@@ -117,6 +121,7 @@ router.post("/", async (req, res) => {
  * /products/{id}:
  *   put:
  *     summary: Update book by ID
+ *     tags: [Products]
  *     description: Update an existing book. Requires a valid JWT token in the Authorization header.
  *     security:
  *       - bearerAuth: []
@@ -159,11 +164,11 @@ router.put("/:id", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
 
-    // const upadateBook = await BookModule.findByIdAndUpdate(id, req.body, {
-    //   returnDocument: "after",
-    // });
+    const upadateBook = await BookModule.findByIdAndUpdate(id, req.body, {
+      returnDocument: "after",
+    });
 
-    // res.status(201).json(upadateBook);
+    res.status(201).json(upadateBook);
   } catch (error) {
     console.error(error);
     res.status(404).json({
@@ -177,6 +182,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
  * /products/{id}:
  *   delete:
  *     summary: Delete book by ID
+ *     tags: [Products]
  *     description: Delete an existing book by ID.
  *     parameters:
  *       - in: path

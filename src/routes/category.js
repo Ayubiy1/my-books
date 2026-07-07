@@ -10,6 +10,7 @@ const router = express.Router();
  * /categories:
  *   get:
  *     summary: Get all categories
+ *     tags: [Categories]
  *     description: Retrieve a list of all categories.
  *     responses:
  *       200:
@@ -36,6 +37,7 @@ router.get("/", async (req, res) => {
  * /categories/{id}:
  *   get:
  *     summary: Get category by ID
+ *     tags: [Categories]
  *     description: Retrieve a single category by its ID.
  *     parameters:
  *       - in: path
@@ -70,6 +72,7 @@ router.get("/:id", async (req, res) => {
  * /categories:
  *   post:
  *     summary: Create a new category
+ *     tags: [Categories]
  *     description: Add a new category. Requires admin privileges.
  *     security:
  *       - bearerAuth: []
@@ -115,6 +118,7 @@ router.post("/", adminMiddleware, async (req, res) => {
  * /categories/{id}:
  *   put:
  *     summary: Update category by ID
+ *     tags: [Categories]
  *     description: Update an existing category. Requires authentication.
  *     security:
  *       - bearerAuth: []
@@ -170,6 +174,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
  * /categories/{id}:
  *   delete:
  *     summary: Delete category by ID
+ *     tags: [Categories]
  *     description: Delete an existing category by ID.
  *     parameters:
  *       - in: path
