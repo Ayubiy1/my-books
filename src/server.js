@@ -1,6 +1,10 @@
+// server.js
+
+const dotenv = require("dotenv");
+dotenv.config(); // <-- avval require, keyin config chaqiriladi
+
 const express = require("express");
 const mongoose = require("mongoose");
-const dotenv = require("dotenv");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
@@ -9,11 +13,13 @@ const productsRouter = require("./routes/book.js");
 const userRouter = require("./routes/profile.js");
 const userCategory = require("./routes/category.js");
 const userOrder = require("./routes/order.js");
+const cartOrder = require("./routes/cart.js");
+const pdfRouter = require("./routes/pdf.js");
+
+const { initGfsBucket } = require("./uploads/config/gridfsConfig.js");
 
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./swagger.js");
-
-dotenv.config();
 
 const app = express();
 
@@ -21,20 +27,21 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
-// Swagger UI
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productsRouter);
 app.use("/api/users", userRouter);
 app.use("/api/categories", userCategory);
 app.use("/api/orders", userOrder);
+app.use("/api/carts", cartOrder);
+app.use("/api/pdf", pdfRouter);
 
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB connected");
+    initGfsBucket();
 
     app.listen(3000, () => {
       console.log("Server running on port 3000");
@@ -44,6 +51,48 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
+
+{
+  // const express = require("express");
+  // const mongoose = require("mongoose");
+  // const dotenv = require("dotenv");
+  // const cors = require("cors");
+  // const cookieParser = require("cookie-parser");
+  // const authRoutes = require("./routes/auth.js");
+  // const productsRouter = require("./routes/book.js");
+  // const userRouter = require("./routes/profile.js");
+  // const userCategory = require("./routes/category.js");
+  // const userOrder = require("./routes/order.js");
+  // const cartOrder = require("./routes/cart.js");
+  // const swaggerUi = require("swagger-ui-express");
+  // const swaggerSpec = require("./swagger.js");
+  // dotenv.config();
+  // const app = express();
+  // app.use(cors());
+  // app.use(express.json());
+  // app.use(cookieParser());
+  // // Swagger UI
+  // app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  // // API routes
+  // app.use("/api/auth", authRoutes);
+  // app.use("/api/products", productsRouter);
+  // app.use("/api/users", userRouter);
+  // app.use("/api/categories", userCategory);
+  // app.use("/api/orders", userOrder);
+  // app.use("/api/carts", cartOrder);
+  // mongoose
+  //   .connect(process.env.MONGO_URI)
+  //   .then(() => {
+  //     console.log("MongoDB connected");
+  //     app.listen(3000, () => {
+  //       console.log("Server running on port 3000");
+  //       console.log("Swagger docs: https://my-books-n5re.onrender.com/api-docs");
+  //     });
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
+}
 
 {
   // const express = require("express");

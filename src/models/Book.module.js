@@ -33,13 +33,66 @@ const bookSchema = new mongoose.Schema(
       default: true,
     },
     owner: {
-      type: String,
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId, // <-- "type: String" xatosi olib tashlandi
       ref: "Seller",
     },
     rating: Number,
+
+    // ---------- YANGI: PDF uchun maydonlar ----------
+    pdfFileId: {
+      type: mongoose.Schema.Types.ObjectId, // GridFS'dagi (pdfs.files) faylga ishora
+      default: null,
+    },
+    pdfFileName: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true },
 );
 
 module.exports = mongoose.model("Book", bookSchema);
+
+{
+  // const bookSchema = new mongoose.Schema(
+  //   {
+  //     name: {
+  //       type: String,
+  //       required: true,
+  //     },
+  //     description: String,
+  //     price: {
+  //       type: Number,
+  //       required: true,
+  //     },
+  //     category: {
+  //       type: String,
+  //       required: true,
+  //     },
+  //     categoryId: {
+  //       type: mongoose.Schema.Types.ObjectId,
+  //       ref: "Category",
+  //     },
+  //     images: [
+  //       {
+  //         type: String,
+  //       },
+  //     ],
+  //     numberSold: {
+  //       type: Number,
+  //       default: 0, // 🔥 Product umumiy sotilgan soni
+  //     },
+  //     isActive: {
+  //       type: Boolean,
+  //       default: true,
+  //     },
+  //     owner: {
+  //       type: String,
+  //       type: mongoose.Schema.Types.ObjectId,
+  //       ref: "Seller",
+  //     },
+  //     rating: Number,
+  //   },
+  //   { timestamps: true },
+  // );
+}

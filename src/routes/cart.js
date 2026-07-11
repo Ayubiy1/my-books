@@ -6,25 +6,26 @@ const {
   userMiddleware,
   orderMiddleware,
 } = require("../middleware/middleware.js");
+const Cart = require("../models/Cart.module.js");
 
 const router = express.Router();
 
 /**
  * @swagger
- * /orders:
+ * /carts:
  *   get:
- *     summary: Get all Orders
- *     tags: [Orders]
- *     description: Retrieve a list of all Orders
+ *     summary: Get all Carts
+ *     tags: [Carts]
+ *     description: Retrieve a list of all Carts
  *     responses:
  *       200:
- *         description: List of Orders
+ *         description: List of Carts
  */
 
 router.get("/", async (req, res) => {
   try {
-    const orders = await Order.find();
-    res.status(200).json(orders);
+    const carts = await Cart.find();
+    res.status(200).json(carts);
   } catch (error) {
     console.error(error);
     res.status(404).json({
@@ -35,10 +36,10 @@ router.get("/", async (req, res) => {
 
 /**
  * @swagger
- * /orders/{id}:
+ * /carts/{id}:
  *   get:
- *     summary: Get order by ID
- *     tags: [Orders]
+ *     summary: Get carts by ID
+ *     tags: [Carts]
  *     parameters:
  *       - in: path
  *         name: id
@@ -48,16 +49,17 @@ router.get("/", async (req, res) => {
  *         description: Order ID
  *     responses:
  *       200:
- *         description: Order found
+ *         description: Carts found
  *       404:
- *         description: Order not found
+ *         description: Carts not found
  */
+
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const order = await Order.findById(id);
-    res.status(200).json(order);
+    const cart = await Cart.findById(id);
+    res.status(200).json(cart);
   } catch (error) {
     console.error(error);
     res.status(404).json({
@@ -68,11 +70,11 @@ router.get("/:id", async (req, res) => {
 
 /**
  * @swagger
- * /orders:
+ * /carts:
  *   post:
- *     summary: Create a new order
- *     tags: [Orders]
- *     description: Add a new order. Requires authentication.
+ *     summary: Create a new cart
+ *     tags: [Carts]
+ *     description: Add a new cart. Requires authentication.
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -85,21 +87,22 @@ router.get("/:id", async (req, res) => {
  *               - userId
  *               - items
  *               - totalPrice
- *               - status
- *               - shippingAddress
- *               - paymentMethod
  *             properties:
  *               userId:
  *                 type: string
- *                 example: "123456789101112abdefghij"
+ *                 example: "64a1f2b3c4d5e6f7a8b9c0d1"
  *               items:
  *                 type: array
  *                 items:
  *                   type: object
+ *                   required:
+ *                     - productId
+ *                     - quantity
+ *                     - price
  *                   properties:
  *                     productId:
  *                       type: string
- *                       example: "123456789101112abdefghij"
+ *                       example: "64a1f2b3c4d5e6f7a8b9c0d2"
  *                     quantity:
  *                       type: integer
  *                       example: 2
@@ -111,35 +114,30 @@ router.get("/:id", async (req, res) => {
  *                 example: 39.98
  *               status:
  *                 type: string
- *                 enum: [pending, paid, shipped, delivered, cancelled]
+ *                 enum: [pending, completed, cancelled]
  *                 example: pending
- *               shippingAddress:
- *                 type: string
- *                 example: "Client's address"
- *               paymentMethod:
- *                 type: string
- *                 enum: [cash, card, paypal]
- *                 example: card
  *     responses:
  *       201:
- *         description: Order created successfully
+ *         description: Cart created successfully
  *       400:
  *         description: Validation error
  *       401:
  *         description: Unauthorized
+ *       404:
+ *         description: Something went wrong
  */
 
 router.post("/", authMiddleware, async (req, res) => {
   try {
-    const checkOrder = await OrderModule.findOne({ title: req.body.title });
+    const checkCart = await Order.findOne({ title: req.body.title });
 
-    const newOrder = new OrderModule(req.body);
+    const newCart = new Cart(req.body);
 
-    const savedOrder = await newOrder.save();
+    const savedCart = await newCart.save();
 
     res.status(201).json({
-      message: "Order muvaffaqiyatli bajarildi!",
-      book: savedOrder,
+      message: "Cart muvaffaqiyatli bajarildi!",
+      book: savedCart,
     });
   } catch (error) {
     console.error(error);
@@ -151,11 +149,11 @@ router.post("/", authMiddleware, async (req, res) => {
 
 /**
  * @swagger
- * /orders/{id}:
+ * /carts/{id}:
  *   put:
- *     summary: Update an existing order
- *     tags: [Orders]
- *     description: Update an order by ID. Requires authentication.
+ *     summary: Update an existing cart
+ *     tags: [Carts]
+ *     description: Update an cart by ID. Requires authentication.
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -174,23 +172,23 @@ router.post("/", authMiddleware, async (req, res) => {
  *             properties:
  *     responses:
  *       200:
- *         description: Order updated successfully
+ *         description: Cart updated successfully
  *       400:
  *         description: Validation error
  *       401:
  *         description: Unauthorized
  *       404:
- *         description: Order not found
+ *         description: Cart not found
  */
 
-router.put("/:id", orderMiddleware, async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const { id, data } = req.params;
-    const updatedOrder = await Order.findByIdAndUpdate(id, req?.body);
+    const updatedCart = await Cart.findByIdAndUpdate(id, req?.body);
 
     res.status(200).json({
-      message: "Order muvaffaqiyatli yangilandi!",
-      book: updatedOrder,
+      message: "Cart muvaffaqiyatli yangilandi!",
+      book: updatedCart,
     });
   } catch (error) {
     console.error(error);
@@ -202,10 +200,10 @@ router.put("/:id", orderMiddleware, async (req, res) => {
 
 /**
  * @swagger
- * /orders/{id}:
+ * /carts/{id}:
  *   delete:
- *     summary: Delete an order by ID
- *     tags: [Orders]
+ *     summary: Delete an cart by ID
+ *     tags: [Carts]
  *     description: Delete an existing order. Requires authentication.
  *     security:
  *       - bearerAuth: []
@@ -215,30 +213,30 @@ router.put("/:id", orderMiddleware, async (req, res) => {
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the order to delete
+ *         description: The ID of the cart to delete
  *     responses:
  *       200:
- *         description: Order deleted successfully
+ *         description: Cart deleted successfully
  *       401:
  *         description: Unauthorized
  *       404:
- *         description: Order not found
+ *         description: Cart not found
  */
 
 router.delete("/:id", orderMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
 
-    const deletedOrder = await OrderModule.findOneAndDelete(id, {
+    const deletedCart = await Cart.findOneAndDelete(id, {
       returnDocument: "after",
     });
-    if (!deletedOrder) {
-      return res.status(404).json({ error: "Order topilmadi" });
+    if (!deletedCart) {
+      return res.status(404).json({ error: "Cart topilmadi" });
     }
 
     res.status(200).json({
-      message: "Order deleted",
-      book: deletedOrder,
+      message: "Cart deleted",
+      book: deletedCart,
     });
   } catch (error) {
     console.log(error);
