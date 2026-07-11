@@ -6,7 +6,7 @@ const pdfController = require("../uploads/controllers/pdfController");
 
 /**
  * @swagger
- * /api/pdf/upload/{bookId}:
+ * /pdf/upload/{bookId}:
  *   post:
  *     summary: PDF fayl yuklash va kitobga bog'lash
  *     tags: [PDF]
@@ -34,7 +34,7 @@ router.post("/upload/:bookId", upload.single("file"), pdfController.uploadPdf);
 
 /**
  * @swagger
- * /api/pdf/book/{bookId}:
+ * /pdf/book/{bookId}:
  *   get:
  *     summary: Kitobning PDF faylini ko'rish (inline)
  *     tags: [PDF]
@@ -52,7 +52,7 @@ router.get("/book/:bookId", pdfController.getPdfByBook);
 
 /**
  * @swagger
- * /api/pdf/book/{bookId}/download:
+ * /pdf/book/{bookId}/download:
  *   get:
  *     summary: Kitobning PDF faylini yuklab olish
  *     tags: [PDF]
@@ -70,7 +70,7 @@ router.get("/book/:bookId/download", pdfController.downloadPdfByBook);
 
 /**
  * @swagger
- * /api/pdf/{fileId}:
+ * /pdf/{fileId}:
  *   delete:
  *     summary: PDF faylni o'chirish
  *     tags: [PDF]
@@ -96,7 +96,7 @@ module.exports = router;
 
 // /**
 //  * @swagger
-//  * /api/pdf/upload:
+//  * /pdf/upload:
 //  *   post:
 //  *     summary: PDF fayl yuklash (MongoDB GridFS'ga saqlanadi)
 //  *     tags: [PDF]
@@ -118,7 +118,7 @@ module.exports = router;
 
 // /**
 //  * @swagger
-//  * /api/pdf/{fileId}:
+//  * /pdf/{fileId}:
 //  *   get:
 //  *     summary: PDF faylni ko'rish (inline)
 //  *     tags: [PDF]
@@ -136,7 +136,7 @@ module.exports = router;
 
 // /**
 //  * @swagger
-//  * /api/pdf/{fileId}/download:
+//  * /pdf/{fileId}/download:
 //  *   get:
 //  *     summary: PDF faylni yuklab olish
 //  *     tags: [PDF]
@@ -154,7 +154,7 @@ module.exports = router;
 
 // /**
 //  * @swagger
-//  * /api/pdf/{fileId}:
+//  * /pdf/{fileId}:
 //  *   delete:
 //  *     summary: PDF faylni o'chirish
 //  *     tags: [PDF]
